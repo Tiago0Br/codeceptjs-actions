@@ -1,0 +1,31 @@
+name: CodeceptJS Tests
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+jobs:
+  e2e-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+        
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+        
+      - name: Run E2E tests
+        run: npm run test:ct
+        
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: codecept-report
+          path: output/
+          retention-days: 30
